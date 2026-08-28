@@ -1,0 +1,65 @@
+{
+  "entities": {
+    "Category": {
+      "title": "Category",
+      "description": "Food category",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "icon": { "type": "string" }
+      },
+      "required": ["id", "name", "icon"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Menu food item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "price": { "type": "number" },
+        "image": { "type": "string" },
+        "isAvailable": { "type": "boolean" },
+        "modifiers": { "type": "array" }
+      },
+      "required": ["id", "name", "category", "price", "image", "isAvailable", "modifiers"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Sales order records",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderNumber": { "type": "string" },
+        "tableNumber": { "type": "string" },
+        "orderType": { "type": "string" },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "tax": { "type": "number" },
+        "discount": { "type": "number" },
+        "discountType": { "type": "string" },
+        "discountValue": { "type": "number" },
+        "total": { "type": "number" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "orderNumber", "orderType", "items", "subtotal", "tax", "discount", "discountType", "discountValue", "total", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "List of food categories"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "List of available menu food products"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Sales orders history log"
+    }
+  }
+}

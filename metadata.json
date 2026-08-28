@@ -1,0 +1,6 @@
+{
+  "name": "Vibrant",
+  "description": "Interactive high-fidelity simulation of Vibrant POS: a premium Pay-First Restaurant POS System featuring a Cashier dashboard, real-time calculations, split payments, category and product management, and dynamic sales statistics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

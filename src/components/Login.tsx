@@ -62,7 +62,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           </div>
           <div>
             <h1 className="text-xl font-black uppercase tracking-wider text-slate-100 flex items-center justify-center gap-1.5">
-              <span>Vibrant Food</span>
+              <span>VibrantFood</span>
             </h1>
             <p className="text-xs text-indigo-400 font-semibold uppercase tracking-wider mt-1">POS & Kitchen Management Gate</p>
           </div>

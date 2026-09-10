@@ -386,7 +386,7 @@ export default function CustomerScreen({ products, ordersHistory, latestComplete
                     <h4 className="text-xs font-black uppercase tracking-wider text-indigo-400 pb-2 border-b border-slate-800 flex items-center justify-between">
                       <span>Order Payment Breakdown</span>
                       <span className="text-[10px] bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded-full font-mono">
-                        Vibrant POS
+                        VibrantFood
                       </span>
                     </h4>
 

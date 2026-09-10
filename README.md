@@ -1,4 +1,4 @@
-# Vibrant POS
+# VibrantFood
 
 A full-stack restaurant **Point-of-Sale (POS) & Kitchen Management** app — cashier register, live customer screen, admin control, and thermal receipt printing, all synced to a cloud database.
 
@@ -38,7 +38,7 @@ See [DEPLOY.md](DEPLOY.md) for the full Cloudflare Pages + Neon setup.
 
 ## 🏷️ Trademark
 
-**Vibrant POS** is developed and maintained by:
+**VibrantFood** is developed and maintained by:
 
 **Brightsky IT** — [www.brightskyit.com](https://www.brightskyit.com)
 

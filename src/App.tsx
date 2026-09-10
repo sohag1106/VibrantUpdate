@@ -382,7 +382,7 @@ export default function App() {
           </div>
           
           <div className="space-y-2">
-            <h1 className="text-xl font-black tracking-wider uppercase text-slate-100">Vibrant POS</h1>
+            <h1 className="text-xl font-black tracking-wider uppercase text-slate-100">VibrantFood</h1>
             <p className="text-xs text-indigo-400 font-semibold uppercase tracking-wider">Syncing Cloud database</p>
           </div>
 
@@ -408,7 +408,7 @@ export default function App() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-sm font-black tracking-wider uppercase text-slate-800">Vibrant POS</h1>
+              <h1 className="text-sm font-black tracking-wider uppercase text-slate-800">VibrantFood</h1>
               <span className="text-[9px] bg-indigo-50 text-indigo-600 border border-indigo-200 px-1.5 py-0.5 rounded font-bold font-mono">
                 CLOUD SYNCED
               </span>
@@ -535,7 +535,7 @@ export default function App() {
       {/* Footer */}
       <footer className="px-6 py-2 border-t border-slate-200 bg-white flex items-center justify-center gap-1 shrink-0 select-none">
         <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
-          Vibrant POS · Powered by
+          VibrantFood · Powered by
         </span>
         <a
           href="https://www.brightskyit.com"

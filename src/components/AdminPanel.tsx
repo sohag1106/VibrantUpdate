@@ -730,7 +730,7 @@ export default function AdminPanel({
     const htmlContent = `
       <html>
         <head>
-          <title>Order List Report - VibrantPOS</title>
+          <title>Order List Report - VibrantFood</title>
           <style>
             body { font-family: Arial, sans-serif; padding: 30px; color: #333; }
             h2 { margin-bottom: 5px; color: #1e293b; }
@@ -745,7 +745,7 @@ export default function AdminPanel({
           </style>
         </head>
         <body>
-          <h2>Vibrant Food - Sales Order List Report</h2>
+          <h2>VibrantFood - Sales Order List Report</h2>
           <div class="meta">
             Generated: ${new Date().toLocaleString()} | 
             Filtered Matches: ${filteredOrders.length} Orders
@@ -1577,7 +1577,7 @@ export default function AdminPanel({
                         
                         <div className="space-y-3 flex-1 flex flex-col justify-start">
                           <div className="text-center pt-2">
-                            <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">Vibrant POS Receipt</h4>
+                            <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">VibrantFood Receipt</h4>
                             <span className="text-[10px] sm:text-xs text-slate-400 block font-mono mt-0.5">#{order.orderNumber}</span>
                           </div>
 

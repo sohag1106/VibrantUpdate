@@ -3,7 +3,7 @@ import { Order } from '../types';
 
 /**
  * Generates and downloads a beautifully formatted, professional business Invoice PDF
- * for the restaurant Vibrant Food.
+ * for the restaurant VibrantFood.
  */
 export function downloadInvoicePdf(order: Order, cashierNameOverride?: string) {
   const cashier = cashierNameOverride || order.cashierName || (typeof localStorage !== 'undefined' ? localStorage.getItem('vibrant_cashier_name') : null) || 'Ratul';
@@ -23,7 +23,7 @@ export function downloadInvoicePdf(order: Order, cashierNameOverride?: string) {
   doc.setTextColor(colorPrimary[0], colorPrimary[1], colorPrimary[2]);
   doc.setFont('Helvetica', 'bold');
   doc.setFontSize(22);
-  doc.text('Vibrant Food', 14, 20);
+  doc.text('VibrantFood', 14, 20);
 
   doc.setFont('Helvetica', 'bold');
   doc.setFontSize(9);

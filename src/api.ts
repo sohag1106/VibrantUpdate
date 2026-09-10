@@ -82,3 +82,23 @@ export const deleteOrder = (id: string) =>
   request<void>(`/api/orders/${id}`, { method: 'DELETE' });
 
 export const resetOrders = () => request<void>('/api/orders', { method: 'DELETE' });
+
+// ---------- Auth ----------
+// Credentials are verified server-side (see /api/login). We return the logged-in
+// display name on success or `null` on failure instead of throwing, since a 401
+// is an expected outcome rather than an error.
+
+export const login = async (username: string, password: string): Promise<string | null> => {
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { user?: string };
+    return data.user ?? null;
+  } catch {
+    return null;
+  }
+};

@@ -23,10 +23,14 @@ import {
   upsertOrder,
   deleteOrder,
   resetOrders,
+  verifyLogin,
+  ADMIN_DISPLAY_NAME,
 } from '../lib/handlers.js';
 
 interface Env {
   DATABASE_URL: string;
+  ADMIN_USERNAME?: string;
+  ADMIN_PASSWORD?: string;
 }
 
 interface PagesContext {
@@ -49,6 +53,14 @@ export const onRequest = async (context: PagesContext) => {
   const resource = segments[0];
   const id = segments[1];
   const method = request.method;
+
+  // Login is verified server-side against env vars (no DB needed).
+  if (method === 'POST' && resource === 'login' && !id) {
+    const body = await request.json().catch(() => ({}));
+    const ok = verifyLogin(body?.username, body?.password, env.ADMIN_USERNAME, env.ADMIN_PASSWORD);
+    if (!ok) return json({ ok: false, error: 'Invalid username or password.' }, 401);
+    return json({ ok: true, user: ADMIN_DISPLAY_NAME });
+  }
 
   try {
     const sql = createDb(env.DATABASE_URL);

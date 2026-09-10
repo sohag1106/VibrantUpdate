@@ -184,3 +184,20 @@ export async function deleteOrder(sql, id) {
 export async function resetOrders(sql) {
   await sql('DELETE FROM orders');
 }
+
+// ---------- Auth ----------
+// Login credentials are verified server-side against environment variables,
+// never against hardcoded values in the frontend, so the username/password
+// aren't exposed in the browser's source.
+
+export function verifyLogin(username, password, expectedUsername, expectedPassword) {
+  if (!username || !password || !expectedUsername || !expectedPassword) return false;
+  return (
+    username.trim().toLowerCase() === expectedUsername.trim().toLowerCase() &&
+    password === expectedPassword
+  );
+}
+
+// Display name shown to a logged-in user.
+export const ADMIN_DISPLAY_NAME = 'Admin';
+

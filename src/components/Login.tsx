@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { KeyRound, User, Store, ShieldAlert, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { login } from '../api';
 
 interface LoginProps {
   onLoginSuccess: (username: string) => void;
@@ -24,15 +25,21 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
     setIsSubmitting(true);
 
-    // Simulate authenticating for a high-fidelity experience
-    setTimeout(() => {
-      if (username.trim().toLowerCase() === 'ratul' && password.trim() === '1010') {
-        onLoginSuccess('Ratul');
-      } else {
-        setError('Invalid username or password. Please try again.');
+    // Verify credentials against the backend (/api/login) so the password is
+    // never stored or checked in the browser.
+    login(username, password)
+      .then((user) => {
+        if (user) {
+          onLoginSuccess(user);
+        } else {
+          setError('Invalid username or password. Please try again.');
+          setIsSubmitting(false);
+        }
+      })
+      .catch(() => {
+        setError('Could not reach the server. Please try again.');
         setIsSubmitting(false);
-      }
-    }, 800);
+      });
   };
 
   return (

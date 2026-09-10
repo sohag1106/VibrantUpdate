@@ -14,6 +14,8 @@ import {
   upsertOrder,
   deleteOrder,
   resetOrders,
+  verifyLogin,
+  ADMIN_DISPLAY_NAME,
 } from '../functions/lib/handlers.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -25,6 +27,24 @@ app.use(express.json());
 // Express 4 doesn't forward rejected promises from async handlers to error
 // middleware on its own, so every route handler below is wrapped with this.
 const asyncHandler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+
+// ---------- Auth ----------
+// Credentials are read from environment variables (see .env / Cloudflare env)
+// and verified server-side, so the password isn't exposed to the browser.
+
+app.post('/api/login', (req, res) => {
+  const ok = verifyLogin(
+    req.body?.username,
+    req.body?.password,
+    process.env.ADMIN_USERNAME,
+    process.env.ADMIN_PASSWORD
+  );
+  if (!ok) {
+    res.status(401).json({ ok: false, error: 'Invalid username or password.' });
+    return;
+  }
+  res.json({ ok: true, user: ADMIN_DISPLAY_NAME });
+});
 
 // ---------- Categories ----------
 

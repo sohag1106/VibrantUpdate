@@ -1,0 +1,9 @@
+name = "vibrant-pos"
+compatibility_date = "2026-09-10"
+
+# Cloudflare Pages configuration
+pages_build_output_dir = "dist"
+
+# Keep Node-compatible npm packages (e.g. @neondatabase/serverless) importable
+# when Cloudflare bundles this project's Pages Functions.
+compatibility_flags = ["nodejs_compat"]

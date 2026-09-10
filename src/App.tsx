@@ -9,8 +9,12 @@ import AdminPanel from './components/AdminPanel';
 import CustomerScreen from './components/CustomerScreen';
 import ReceiptModal from './components/ReceiptModal';
 import Login from './components/Login';
-import { collection, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
-import { db, OperationType, handleFirestoreError, sanitizeForFirestore } from './firebase';
+import {
+  fetchCategories, upsertCategory, deleteCategory,
+  fetchProducts, upsertProduct, deleteProduct,
+  fetchOrders, saveOrder as apiSaveOrder, deleteOrder as apiDeleteOrder, resetOrders,
+  OperationType, handleApiError,
+} from './api';
 
 // Pre-seeded historic orders so the Sales Dashboard looks beautiful on initial load
 const SEEDED_ORDERS: Order[] = [
@@ -143,26 +147,24 @@ export default function App() {
     }
   };
 
-  // Sync state with Firestore on launch
+  // Sync state with Neon on launch
   useEffect(() => {
     const loadAndSyncData = async () => {
       try {
         // 1. Fetch & Sync Categories
-        const categoriesSnap = await getDocs(collection(db, 'categories'));
+        const categoriesFromDb = await fetchCategories();
         let dbCategories: Category[] = [];
-        if (categoriesSnap.empty) {
-          // Pre-seed categories to Firebase Firestore using current/initial
+        if (categoriesFromDb.length === 0) {
+          // Pre-seed categories to Neon using current/initial
           const toSeed = categoriesRef.current.length > 0 ? categoriesRef.current : INITIAL_CATEGORIES;
           for (const cat of toSeed) {
-            await setDoc(doc(db, 'categories', cat.id), cat);
+            await upsertCategory(cat);
           }
           dbCategories = [...toSeed];
-          console.log("Seeded categories in Firestore.");
+          console.log("Seeded categories in Neon.");
         } else {
-          categoriesSnap.forEach(doc => {
-            dbCategories.push(doc.data() as Category);
-          });
-          
+          dbCategories = [...categoriesFromDb];
+
           // Separate 'all' and others to sort only the active categories
           const allCategory = dbCategories.find(c => c.id === 'all') || { id: 'all', name: 'All Categories', icon: 'Utensils' };
           const otherCategories = dbCategories.filter(c => c.id !== 'all');
@@ -182,20 +184,18 @@ export default function App() {
         } catch (e) {}
 
         // 2. Fetch & Sync Products
-        const productsSnap = await getDocs(collection(db, 'products'));
+        const productsFromDb = await fetchProducts();
         let dbProducts: Product[] = [];
-        if (productsSnap.empty) {
-          // Pre-seed products to Firebase Firestore from current/initial
+        if (productsFromDb.length === 0) {
+          // Pre-seed products to Neon from current/initial
           const toSeed = productsRef.current.length > 0 ? productsRef.current : INITIAL_PRODUCTS;
           for (const prod of toSeed) {
-            await setDoc(doc(db, 'products', prod.id), sanitizeForFirestore(prod));
+            await upsertProduct(prod);
           }
           dbProducts = [...toSeed];
-          console.log("Seeded products in Firestore.");
+          console.log("Seeded products in Neon.");
         } else {
-          productsSnap.forEach(doc => {
-            dbProducts.push(doc.data() as Product);
-          });
+          dbProducts = [...productsFromDb];
         }
         setProducts(dbProducts);
         try {
@@ -203,15 +203,8 @@ export default function App() {
         } catch (e) {}
 
         // 3. Fetch & Sync Orders
-        const ordersSnap = await getDocs(collection(db, 'orders'));
-        let dbOrders: Order[] = [];
-        if (!ordersSnap.empty) {
-          ordersSnap.forEach(doc => {
-            dbOrders.push(doc.data() as Order);
-          });
-          // Sort by creation date descending
-          dbOrders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        }
+        // API already sorts by created_at descending
+        const dbOrders: Order[] = await fetchOrders();
         setOrdersHistory(dbOrders);
         try {
           localStorage.setItem('vibrant_orders_backup', JSON.stringify(dbOrders));
@@ -219,7 +212,7 @@ export default function App() {
 
         setIsLoading(false);
       } catch (error) {
-        console.warn("Firestore sync notice (running in local offline mode):", error);
+        console.warn("Neon sync notice (running in local offline mode):", error);
         // Do NOT overwrite existing user-added products on connection errors!
         setIsLoading(false);
       }
@@ -244,23 +237,23 @@ export default function App() {
       console.error("Failed to save products to localStorage:", e);
     }
 
-    // 2. Diff changes and sync to Firebase Firestore safely in background
+    // 2. Diff changes and sync to Neon safely in background
     try {
       // Find deleted products
       const deleted = prevProducts.filter(p1 => !nextProducts.some(p2 => p2.id === p1.id));
       for (const p of deleted) {
-        await deleteDoc(doc(db, 'products', p.id)).catch(err => console.warn("Firestore delete err:", err));
+        await deleteProduct(p.id).catch(err => console.warn("Neon delete err:", err));
       }
 
       // Find new or updated products
       for (const p of nextProducts) {
         const existing = prevProducts.find(ex => ex.id === p.id);
         if (!existing || JSON.stringify(existing) !== JSON.stringify(p)) {
-          await setDoc(doc(db, 'products', p.id), sanitizeForFirestore(p)).catch(err => console.warn("Firestore setDoc err:", err));
+          await upsertProduct(p).catch(err => console.warn("Neon upsert err:", err));
         }
       }
     } catch (error) {
-      console.warn("Background Firestore product sync issue:", error);
+      console.warn("Background Neon product sync issue:", error);
     }
   };
 
@@ -280,29 +273,26 @@ export default function App() {
       // Find deleted categories
       const deleted = prevCategories.filter(c1 => !nextCategories.some(c2 => c2.id === c1.id));
       for (const c of deleted) {
-        await deleteDoc(doc(db, 'categories', c.id)).catch(err => console.warn("Firestore delete err:", err));
+        await deleteCategory(c.id).catch(err => console.warn("Neon delete err:", err));
       }
 
       // Find new or updated categories
       for (const c of nextCategories) {
         const existing = prevCategories.find(ex => ex.id === c.id);
         if (!existing || JSON.stringify(existing) !== JSON.stringify(c)) {
-          await setDoc(doc(db, 'categories', c.id), sanitizeForFirestore(c)).catch(err => console.warn("Firestore setDoc err:", err));
+          await upsertCategory(c).catch(err => console.warn("Neon upsert err:", err));
         }
       }
     } catch (error) {
-      console.warn("Background Firestore category sync issue:", error);
+      console.warn("Background Neon category sync issue:", error);
     }
   };
 
   const handleResetDatabase = async () => {
     setIsLoading(true);
     try {
-      // 1. Delete all current order docs from Firestore
-      const orderSnap = await getDocs(collection(db, 'orders'));
-      for (const d of orderSnap.docs) {
-        await deleteDoc(doc(db, 'orders', d.id));
-      }
+      // 1. Delete all current orders from Neon
+      await resetOrders();
 
       // 2. Clear local React state for order history so it starts completely fresh
       setOrdersHistory([]);
@@ -325,7 +315,7 @@ export default function App() {
 
   const handleDeleteOrder = async (orderId: string) => {
     try {
-      await deleteDoc(doc(db, 'orders', orderId));
+      await apiDeleteOrder(orderId);
       setOrdersHistory(prev => {
         const next = prev.filter(o => o.id !== orderId);
         try {
@@ -335,7 +325,7 @@ export default function App() {
       });
       console.log("Deleted order successfully:", orderId);
     } catch (error) {
-      console.error("Failed to delete order from Firestore:", error);
+      console.error("Failed to delete order from Neon:", error);
       setOrdersHistory(prev => {
         const next = prev.filter(o => o.id !== orderId);
         try {
@@ -361,12 +351,12 @@ export default function App() {
     setReceiptSplitDetails(splitDetails);
     setActiveReceiptOrder(completedOrder);
 
-    // Persist completed order directly to Firebase Firestore
+    // Persist completed order directly to Neon
     try {
-      await setDoc(doc(db, 'orders', completedOrder.id), sanitizeForFirestore(completedOrder));
-      console.log("Order saved to Firestore successfully:", completedOrder.id);
+      await apiSaveOrder(completedOrder);
+      console.log("Order saved to Neon successfully:", completedOrder.id);
     } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, `orders/${completedOrder.id}`);
+      handleApiError(error, OperationType.WRITE, `orders/${completedOrder.id}`);
     }
   };
 
@@ -398,7 +388,7 @@ export default function App() {
 
           <div className="p-4 bg-slate-800/50 border border-slate-700/50 rounded-2xl flex items-center gap-3 justify-center text-slate-400 text-xs font-mono">
             <Loader2 className="h-4 w-4 text-indigo-500 animate-spin" />
-            <span>Connecting to Firebase Firestore...</span>
+            <span>Connecting to Neon Postgres...</span>
           </div>
         </div>
       </div>

@@ -532,6 +532,21 @@ export default function App() {
         )}
       </main>
 
+      {/* Footer */}
+      <footer className="px-6 py-2 border-t border-slate-200 bg-white flex items-center justify-center gap-1 shrink-0 select-none">
+        <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+          Vibrant POS · Powered by
+        </span>
+        <a
+          href="https://www.brightskyit.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[10px] font-black uppercase tracking-wider text-indigo-600 hover:text-indigo-500 hover:underline"
+        >
+          Brightsky IT
+        </a>
+      </footer>
+
       {/* SUCCESS CHECOUT THERMAL PRINT QUEUE OVERLAY */}
       {activeReceiptOrder && (
         <ReceiptModal 

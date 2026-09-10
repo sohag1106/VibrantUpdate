@@ -93,3 +93,10 @@ connected GitHub branch. No manual steps.
 `server/index.js` is kept for local development (it powers `npm run dev`'s API
 side). In production the `/api/*` routes run as a Cloudflare Pages Function
 (`functions/api/[[path]].ts`) instead, so the Express server is not deployed.
+
+---
+
+## 🏷️ Trademark
+
+Vibrant POS is developed and maintained by **Brightsky IT** — [www.brightskyit.com](https://www.brightskyit.com).
+© Brightsky IT. All rights reserved.

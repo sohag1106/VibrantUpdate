@@ -153,6 +153,22 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           </button>
 
         </form>
+
+        {/* Agency trademark */}
+        <div className="mt-6 pt-4 border-t border-slate-800 text-center space-y-1">
+          <p className="text-[9px] uppercase tracking-widest text-slate-500 font-semibold flex items-center justify-center gap-1">
+            <span>Powered by</span>
+            <a
+              href="https://www.brightskyit.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-black text-indigo-400 hover:text-indigo-300 hover:underline"
+            >
+              Brightsky IT
+            </a>
+          </p>
+          <p className="text-[9px] text-slate-600 font-mono">www.brightskyit.com</p>
+        </div>
       </motion.div>
     </div>
   );
